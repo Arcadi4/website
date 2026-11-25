@@ -4,10 +4,10 @@ import { ScenePersistentElement } from "@/components/animations/ScenePersistentE
 import { SceneReveal } from "@/components/animations/SceneReveal"
 import { HomeSlideDeck } from "@/components/home/HomeSlideDeck"
 import { SceneGrid } from "@/components/home/SceneGrid"
-import { Barcode } from "@/components/signal/Barcode"
+import { Barcode } from "@/components/ui/barcode"
 import type { ArticleMeta } from "@/lib/content"
 import Link from "next/link"
-import ProximityLink from "@/components/proximity/ProximityLink"
+import ProximityLink from "@/components/ui/ProximityLink"
 import Image from "next/image"
 import { formatDate } from "@/lib/utils"
 

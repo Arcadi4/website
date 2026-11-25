@@ -33,12 +33,13 @@ export function SceneGrid({
   return (
     <Component
       className={cn(
-        "relative isolate grid w-full grid-cols-12 gap-4 overflow-visible p-8",
+        "relative isolate grid w-full gap-4 overflow-visible p-8",
         className
       )}
       style={{
         ...style,
         height,
+        gridTemplateColumns: `repeat(${SCENE_COLUMN_COUNT}, minmax(0, 1fr))`,
         gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`
       }}
     >
@@ -46,9 +47,12 @@ export function SceneGrid({
         <div
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-y-0 right-8 left-8 -z-1 grid grid-cols-12 gap-4 opacity-[.12]",
+            "pointer-events-none absolute inset-y-0 right-8 left-8 -z-1 grid gap-4 opacity-[.12]",
             gridLines === "background" ? "text-background" : "text-foreground"
           )}
+          style={{
+            gridTemplateColumns: `repeat(${SCENE_COLUMN_COUNT}, minmax(0, 1fr))`
+          }}
         >
           {Array.from({ length: SCENE_COLUMN_COUNT }, (_, index) => (
             <span className="border-l border-current" key={index} />

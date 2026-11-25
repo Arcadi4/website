@@ -8,9 +8,9 @@ import {
   type ReactNode
 } from "react"
 
-import { createRectCache } from "../rect-cache"
+import { createRectCache } from "./rect-cache"
 
-export interface DisplacementOptions {
+interface DisplacementOptions {
   /** Cells across the width of the wrapped area (4 to 100). */
   grid?: number
   /** Width to height ratio of each cell (0.25 to 4). 1 is a perfect square. */
@@ -37,7 +37,7 @@ export interface DisplacementOptions {
   scramble?: number
 }
 
-export interface DisplacementElements {
+interface DisplacementElements {
   /** Canvas with content="drawable" (or layoutsubtree) that hosts the HTML content. */
   source: HTMLCanvasElement
   /** The element inside the source canvas that gets captured. */
@@ -46,7 +46,7 @@ export interface DisplacementElements {
   output: HTMLCanvasElement
 }
 
-export interface DisplacementInstance {
+interface DisplacementInstance {
   /** Update effect options live. */
   setOptions: (options: DisplacementOptions) => void
   /** Re-read canvas size. Call when the element is resized. */
@@ -129,18 +129,23 @@ void main () {
   outColor = vec4(col, alpha);
 }`
 
-export function supportsHtmlInCanvas(): boolean {
+let htmlInCanvasSupport: boolean | undefined
+
+function supportsHtmlInCanvas(): boolean {
   if (typeof document === "undefined") return false
+  if (htmlInCanvasSupport !== undefined) return htmlInCanvasSupport
+
   const probe = document.createElement("canvas") as PaintableCanvas
   const ctx = probe.getContext("2d") as ElementImageContext | null
-  return Boolean(
+  htmlInCanvasSupport = Boolean(
     ctx &&
     typeof ctx.drawElementImage === "function" &&
     typeof probe.requestPaint === "function"
   )
+  return htmlInCanvasSupport
 }
 
-export function createDisplacement(
+function createDisplacement(
   elements: DisplacementElements,
   options: DisplacementOptions = {}
 ): DisplacementInstance | null {
@@ -178,22 +183,41 @@ export function createDisplacement(
     }
   }
 
-  function compile(type: number, text: string): WebGLShader {
-    const shader = gl!.createShader(type)!
+  function compile(type: number, text: string): WebGLShader | null {
+    const shader = gl!.createShader(type)
+    if (!shader) return null
     gl!.shaderSource(shader, text)
     gl!.compileShader(shader)
     if (!gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) {
       console.error("Displacement shader error:", gl!.getShaderInfoLog(shader))
+      gl!.deleteShader(shader)
+      return null
     }
     return shader
   }
 
   const vertexShader = compile(gl.VERTEX_SHADER, VERT)
   const fragmentShader = compile(gl.FRAGMENT_SHADER, FRAG)
-  const program = gl.createProgram()!
+  const program = gl.createProgram()
+  if (!vertexShader || !fragmentShader || !program) {
+    if (vertexShader) gl.deleteShader(vertexShader)
+    if (fragmentShader) gl.deleteShader(fragmentShader)
+    if (program) gl.deleteProgram(program)
+    if (htmlInCanvas) paintable.onpaint = null
+    return null
+  }
+
   gl.attachShader(program, vertexShader)
   gl.attachShader(program, fragmentShader)
   gl.linkProgram(program)
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("Displacement program error:", gl.getProgramInfoLog(program))
+    gl.deleteShader(vertexShader)
+    gl.deleteShader(fragmentShader)
+    gl.deleteProgram(program)
+    if (htmlInCanvas) paintable.onpaint = null
+    return null
+  }
 
   const uniforms: Record<string, WebGLUniformLocation> = {}
   const count = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)
@@ -556,14 +580,14 @@ export function createDisplacement(
   return {
     setOptions(next) {
       let changed = false
+      const updates: Record<string, number> = {}
       for (const [key, value] of Object.entries(next)) {
+        if (typeof value !== "number") continue
         const prev = config[key as keyof typeof config]
-        if (prev !== value) {
-          changed = true
-          break
-        }
+        if (prev !== value) changed = true
+        updates[key] = value
       }
-      Object.assign(config, next)
+      Object.assign(config, updates)
       if (!changed) return
       syncGrid()
       syncCanvasSize()
@@ -594,7 +618,7 @@ export function createDisplacement(
   }
 }
 
-export interface DisplacementProps extends DisplacementOptions {
+interface DisplacementProps extends DisplacementOptions {
   children: ReactNode
   className?: string
   contentClassName?: string
@@ -707,5 +731,3 @@ export function Displacement({
     </div>
   )
 }
-
-export default Displacement

@@ -5,7 +5,7 @@ import { menuItems } from "@/app/posts/menuItems"
 import { Entrance } from "@/components/animations/Entrance"
 import { MarkdownContent } from "@/components/article/MarkdownContent"
 import { ArticleWheelNav, ReadingProgress } from "./PostClient"
-import { Menu } from "@/components/layout/Menu"
+import { SiteNav } from "@/components/layout/SiteNav"
 import { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
@@ -91,7 +91,7 @@ export default async function Post({
           aria-label="Primary"
           className="col-span-3 col-start-9 row-span-1 row-start-1 self-start justify-self-end max-md:col-span-5 max-md:col-start-8"
         >
-          <Menu
+          <SiteNav
             items={menuItems.filter((item) => item.href !== "/all")}
             className="flex flex-col items-end font-funnel-display text-4xl leading-none max-md:text-3xl"
             delayMs={240}
@@ -245,7 +245,7 @@ export default async function Post({
           aria-label="Post navigation"
           className="col-span-5 col-start-8 flex flex-col items-end gap-1 self-center max-md:col-span-full max-md:items-start"
         >
-          <Menu
+          <SiteNav
             items={[
               { name: "Back to home", href: "/" },
               { name: "All posts", href: "/all" }

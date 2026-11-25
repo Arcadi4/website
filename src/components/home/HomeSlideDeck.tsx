@@ -2,6 +2,12 @@
 
 import { ScenePersistentLayer } from "@/components/animations/ScenePersistentElement"
 import { LineSidebar } from "@/components/ui/line-sidebar"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselViewport
+} from "@ui-sdk/react/carousel"
 import { cn } from "@/lib/utils"
 import type { ReactNode } from "react"
 import {
@@ -9,9 +15,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
   useState
 } from "react"
 import styles from "./HomeSlideDeck.module.css"
@@ -22,8 +26,6 @@ type HomeSlideDeckProps = {
   readonly children: ReactNode
   readonly labels: readonly string[]
 }
-
-type LegacyWheelEvent = WheelEvent & { readonly wheelDeltaY?: number }
 
 const HomeSlideStateContext = createContext<HomeSlideState | null>(null)
 
@@ -40,129 +42,62 @@ export function useHomeSlideState() {
 export function HomeSlideDeck({ children, labels }: HomeSlideDeckProps) {
   const slides = useMemo(() => Children.toArray(children), [children])
   const [activeIndex, setActiveIndex] = useState(0)
-  const deckRef = useRef<HTMLElement>(null)
   const lastIndex = slides.length - 1
 
   const selectSlide = useCallback(
     (nextIndex: number) => {
-      const index = Math.min(Math.max(nextIndex, 0), lastIndex)
-      const slide = deckRef.current?.querySelector<HTMLElement>(
-        `[data-scene-index="${index}"]`
-      )
-
-      slide?.scrollIntoView({ behavior: "smooth", block: "start" })
+      setActiveIndex(Math.min(Math.max(nextIndex, 0), lastIndex))
     },
     [lastIndex]
   )
-
-  useEffect(() => {
-    const deck = deckRef.current
-
-    if (!deck) {
-      return
-    }
-
-    const handleWheel = (event: WheelEvent) => {
-      // Detented wheels typically expose 120-unit steps; pixel gestures stay native.
-      const wheelDeltaY = Math.abs((event as LegacyWheelEvent).wheelDeltaY ?? 0)
-
-      if (
-        event.ctrlKey ||
-        Math.abs(event.deltaY) <= Math.abs(event.deltaX) ||
-        (event.deltaMode === WheelEvent.DOM_DELTA_PIXEL &&
-          (wheelDeltaY < 120 || wheelDeltaY % 120 !== 0))
-      ) {
-        return
-      }
-
-      selectSlide(activeIndex + Math.sign(event.deltaY))
-    }
-
-    deck.addEventListener("wheel", handleWheel, { passive: false })
-
-    return () => deck.removeEventListener("wheel", handleWheel)
-  }, [activeIndex, selectSlide])
-
-  useEffect(() => {
-    const deck = deckRef.current
-
-    if (!deck) {
-      return
-    }
-
-    const sceneElements = Array.from(
-      deck.querySelectorAll<HTMLElement>("[data-home-scene]")
-    )
-    const visibility = new Map<HTMLElement, number>()
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          visibility.set(entry.target as HTMLElement, entry.intersectionRatio)
-        })
-
-        const nextIndex = sceneElements.reduce((bestIndex, scene, index) => {
-          const ratio = visibility.get(scene) ?? 0
-          const bestRatio = visibility.get(sceneElements[bestIndex]) ?? 0
-
-          return ratio > bestRatio ? index : bestIndex
-        }, 0)
-
-        setActiveIndex(nextIndex)
-      },
-      {
-        root: deck,
-        threshold: [0, 0.25, 0.5, 0.75, 1]
-      }
-    )
-
-    sceneElements.forEach((scene) => observer.observe(scene))
-
-    return () => observer.disconnect()
-  }, [slides.length])
 
   if (slides.length !== labels.length) {
     throw new Error("HomeSlideDeck requires one label for every slide.")
   }
 
   return (
-    <main
-      aria-label="Homepage scenes"
-      className={cn(
-        styles.deck,
-        "relative isolate h-svh w-dvw snap-y snap-mandatory overflow-x-hidden overflow-y-auto overscroll-y-contain bg-background text-foreground"
-      )}
-      data-home-deck
-      ref={deckRef}
+    <Carousel
+      orientation="vertical"
+      page={activeIndex + 1}
+      onPageChange={(page) => selectSlide(page - 1)}
+      render={
+        <main
+          aria-label="Homepage scenes"
+          className="relative isolate h-svh w-dvw bg-background text-foreground"
+          data-home-deck
+        />
+      }
     >
       <p aria-live="polite" className="sr-only">
         Scene {activeIndex + 1} of {slides.length}: {labels[activeIndex]}
       </p>
 
-      {slides.map((slide, index) => {
-        const state: HomeSlideState =
-          index === activeIndex
-            ? "active"
-            : index < activeIndex
-              ? "past"
-              : "future"
+      <CarouselViewport className={cn(styles.deck, "h-svh w-dvw")} tabIndex={0}>
+        <CarouselContent>
+          {slides.map((slide, index) => {
+            const state: HomeSlideState =
+              index === activeIndex
+                ? "active"
+                : index < activeIndex
+                  ? "past"
+                  : "future"
 
-        return (
-          <HomeSlideStateContext.Provider
-            key={`${index}-${labels[index]}`}
-            value={state}
-          >
-            <section
-              aria-label={`${index + 1} of ${slides.length}: ${labels[index]}`}
-              className="relative z-2 min-h-svh snap-start snap-always overflow-x-clip"
-              data-home-scene
-              data-scene-index={index}
-              data-state={state}
-            >
-              {slide}
-            </section>
-          </HomeSlideStateContext.Provider>
-        )
-      })}
+            return (
+              <CarouselItem key={index}>
+                <HomeSlideStateContext.Provider value={state}>
+                  <section
+                    aria-label={`${index + 1} of ${slides.length}: ${labels[index]}`}
+                    className="relative z-2 min-h-svh snap-start snap-always overflow-x-clip"
+                    data-state={state}
+                  >
+                    {slide}
+                  </section>
+                </HomeSlideStateContext.Provider>
+              </CarouselItem>
+            )
+          })}
+        </CarouselContent>
+      </CarouselViewport>
 
       <ScenePersistentLayer activeIndex={activeIndex} />
 
@@ -183,6 +118,6 @@ export function HomeSlideDeck({ children, labels }: HomeSlideDeckProps) {
           proximityRadius={90}
         />
       </div>
-    </main>
+    </Carousel>
   )
 }

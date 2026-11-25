@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { menuItems } from "@/app/posts/menuItems"
 import { Entrance } from "@/components/animations/Entrance"
 import { Displacement } from "@/components/canvasui/Displacement"
-import { Menu } from "@/components/layout/Menu"
+import { SiteNav } from "@/components/layout/SiteNav"
 
 type ErrorPageClientProps = {
   code: string
@@ -147,7 +147,7 @@ export function ErrorPageClient({
             </Entrance>
           ) : null}
 
-          <Menu
+          <SiteNav
             items={menuItems}
             className="flex flex-col items-end"
             delayMs={850}

@@ -16,13 +16,13 @@
 }
 
 .underline::selection {
-  color: var(--background);
+  color: var(--color-background);
   text-decoration-color: transparent;
   background: currentColor;
 }
 
 .underline::-moz-selection {
-  color: var(--background);
+  color: var(--color-background);
   text-decoration-color: transparent;
   background: currentColor;
 }

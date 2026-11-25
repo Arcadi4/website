@@ -3,22 +3,16 @@
 import Fuse from "fuse.js"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
+import { Input, InputClear, InputGroup } from "@ui-sdk/react/input"
+import { Toggle, ToggleGroup } from "@ui-sdk/react/toggle"
 import { menuItems } from "@/app/posts/menuItems"
 import { Entrance } from "@/components/animations/Entrance"
-import { Menu } from "@/components/layout/Menu"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText
-} from "@/components/ui/input-group"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { SiteNav } from "@/components/layout/SiteNav"
 import type { ArticleMeta } from "@/lib/content"
 import { formatDate } from "@/lib/utils"
-import { Toggle } from "@/components/ui/toggle"
-import HalftoneReveal from "@/components/HalftoneReveal"
+import HalftoneReveal from "@/components/canvasui/HalftoneReveal"
 import { colorAcid, colorKlein, colorMagenta } from "@/lib/colors"
-import OptionWheel from "@/components/OptionWheel"
+import OptionWheel from "@/components/ui/OptionWheel"
 
 type AllArticlesClientProps = {
   readonly articles: readonly ArticleMeta[]
@@ -34,7 +28,7 @@ type ArchiveArticleProps = {
 const gridClassName = "grid grid-cols-12 gap-4 p-8"
 
 const tagClassName =
-  "px-2 !rounded-none text-base font-normal data-[state=on]:bg-magenta data-[state=on]:text-white aria-pressed:bg-magenta aria-pressed:text-white"
+  "px-2 !rounded-none text-base font-normal data-pressed:bg-magenta data-pressed:text-white"
 
 function ArchiveArticle({
   article,
@@ -264,7 +258,7 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
           aria-label="Main navigation"
           className="z-20 col-span-3 col-start-8 row-span-2 row-start-1 self-start"
         >
-          <Menu
+          <SiteNav
             items={menuItems.filter((item) => item.href !== "/all")}
             className="flex flex-col font-funnel-display text-4xl leading-none"
             delayMs={320}
@@ -308,13 +302,12 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
               className="flex flex-wrap justify-start gap-x-2 gap-y-1 rounded-none"
               multiple
               onValueChange={setSelectedTags}
-              spacing={0}
               value={selectedTags}
             >
               {tags.map((tag) => (
-                <ToggleGroupItem className={tagClassName} key={tag} value={tag}>
+                <Toggle className={tagClassName} key={tag} value={tag}>
                   + {tag}
-                </ToggleGroupItem>
+                </Toggle>
               ))}
             </ToggleGroup>
           ) : null}
@@ -327,19 +320,20 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
           delayMs={540}
           durationMs={600}
         >
-          <InputGroup className="h-8 rounded-none border-0 bg-transparent shadow-none has-[[data-slot=input-group-control]:focus-visible]:ring-0">
-            <InputGroupAddon className="pl-0 text-foreground">
-              <InputGroupText className="text-base font-normal text-foreground">
-                Search:
-              </InputGroupText>
-            </InputGroupAddon>
-            <InputGroupInput
+          <InputGroup className="h-8 rounded-none border-0 bg-transparent shadow-none has-[input:focus-visible]:ring-0">
+            <span className="pl-0 text-base font-normal text-foreground">
+              Search:
+            </span>
+            <Input
               className="border-b p-0 text-base focus:border-klein md:text-base"
               aria-label="Search articles"
-              onChange={(event) => setQuery(event.target.value)}
+              onValueChange={(value) => setQuery(value)}
               type="search"
               value={query}
             />
+            <InputClear aria-label="Clear search">
+              <span aria-hidden="true">×</span>
+            </InputClear>
           </InputGroup>
         </Entrance>
       </section>

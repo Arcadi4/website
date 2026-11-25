@@ -57,7 +57,9 @@ export const funnelDisplay = Funnel_Display({
 })
 
 export const wdxlLubrifontJpN = WDXL_Lubrifont_JP_N({
+  adjustFontFallback: false,
   display: "swap",
+  fallback: ["sans-serif"],
   preload: false,
   variable: "--font-wdxl-lubrifont-jp-n",
   weight: "400"

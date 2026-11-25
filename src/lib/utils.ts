@@ -9,5 +9,8 @@ export function formatDate(date: Date): string {
 export function slashSeparatedDate(date: Date): string {
   return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getDate().toString().padStart(2, "0")}`
 }
+export function isExternalHref(href: string): boolean {
+  return /^(?:https?:|mailto:|tel:|\/\/)/i.test(href)
+}
 
 export { cn } from "cn"

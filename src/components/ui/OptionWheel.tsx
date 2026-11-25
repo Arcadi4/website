@@ -2,17 +2,18 @@
 
 import {
   type CSSProperties,
-  type KeyboardEvent,
   type PointerEvent,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
-  type WheelEvent
+  useState
 } from "react"
+import { Listbox, ListboxItem } from "@ui-sdk/react/listbox"
+import { cn } from "@/lib/utils"
 
-export interface OptionWheelProps {
+interface OptionWheelProps {
   readonly items: readonly string[]
   readonly selectedIndex: number
   readonly onItemClick?: (index: number, item: string) => void
@@ -87,37 +88,50 @@ export default function OptionWheel({
     return Math.max(max, 1)
   }, [items])
   const hasAuto = fontSize === undefined
+  const explicitFontPx = fontSize ?? 16
   const autoFontSizeValue = `clamp(${MIN_PX}px, calc((100cqi - 2 * var(--ow-x-padding)) / var(--ow-longest) / ${BOLD_AVG} * ${SHRINK}), ${MAX_PX}px)`
 
   const [dragging, setDragging] = useState(false)
 
-  onItemClickRef.current = onItemClick
-  const initialRowHeight = hasAuto
-    ? Math.max(16 * spacing, 1)
-    : Math.max((fontSize as number) * 16 * spacing, 1)
   const stateRef = useRef<WheelState>({
     count: items.length,
-    rowHeight: initialRowHeight,
+    rowHeight: hasAuto
+      ? Math.max(16 * spacing, 1)
+      : Math.max(explicitFontPx * 16 * spacing, 1),
     smoothing,
     tilt,
     fade,
     blur
   })
-  stateRef.current.count = items.length
-  stateRef.current.smoothing = smoothing
-  stateRef.current.tilt = tilt
-  stateRef.current.fade = fade
-  stateRef.current.blur = blur
-  if (!hasAuto) {
-    stateRef.current.rowHeight = Math.max(
-      (fontSize as number) * 16 * spacing,
-      1
-    )
-  }
 
+  const setTarget = useCallback((position: number, snap = false) => {
+    const next = snap ? Math.round(position) : position
+    targetRef.current = clamp(next, stateRef.current.count)
+  }, [])
   useLayoutEffect(() => {
     targetRef.current = clamp(selectedIndex, items.length)
-  }, [items.length, selectedIndex])
+    onItemClickRef.current = onItemClick
+    const state = stateRef.current
+    state.count = items.length
+    state.smoothing = smoothing
+    state.tilt = tilt
+    state.fade = fade
+    state.blur = blur
+    if (!hasAuto) {
+      state.rowHeight = Math.max(explicitFontPx * 16 * spacing, 1)
+    }
+  }, [
+    items.length,
+    selectedIndex,
+    onItemClick,
+    smoothing,
+    tilt,
+    fade,
+    blur,
+    hasAuto,
+    explicitFontPx,
+    spacing
+  ])
 
   useLayoutEffect(() => {
     if (!hasAuto) return
@@ -138,8 +152,12 @@ export default function OptionWheel({
     const root = rootRef.current
     if (root) observer.observe(root)
     window.addEventListener("resize", updateRowHeight)
-    void document.fonts.ready.then(updateRowHeight)
+    let cancelled = false
+    void document.fonts.ready.then(() => {
+      if (!cancelled) updateRowHeight()
+    })
     return () => {
+      cancelled = true
       observer.disconnect()
       window.removeEventListener("resize", updateRowHeight)
     }
@@ -196,26 +214,32 @@ export default function OptionWheel({
       if (animationFrameRef.current !== undefined) {
         cancelAnimationFrame(animationFrameRef.current)
       }
+    }
+  }, [])
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault()
+      setTarget(targetRef.current + event.deltaY / stateRef.current.rowHeight)
       if (wheelSnapTimeoutRef.current !== undefined) {
         window.clearTimeout(wheelSnapTimeoutRef.current)
       }
+      wheelSnapTimeoutRef.current = window.setTimeout(() => {
+        setTarget(targetRef.current, true)
+      }, 120)
     }
-  }, [])
 
-  const setTarget = (position: number, snap = false) => {
-    const next = snap ? Math.round(position) : position
-    targetRef.current = clamp(next, stateRef.current.count)
-  }
-  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    setTarget(targetRef.current + event.deltaY / stateRef.current.rowHeight)
-    if (wheelSnapTimeoutRef.current !== undefined) {
-      window.clearTimeout(wheelSnapTimeoutRef.current)
+    root.addEventListener("wheel", handleWheel, { passive: false })
+    return () => {
+      root.removeEventListener("wheel", handleWheel)
+      if (wheelSnapTimeoutRef.current !== undefined) {
+        window.clearTimeout(wheelSnapTimeoutRef.current)
+        wheelSnapTimeoutRef.current = undefined
+      }
     }
-    wheelSnapTimeoutRef.current = window.setTimeout(() => {
-      setTarget(targetRef.current, true)
-    }, 120)
-  }
+  }, [setTarget])
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     dragRef.current = {
@@ -250,51 +274,47 @@ export default function OptionWheel({
     if (suppressClickRef.current) setTarget(targetRef.current, true)
   }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const direction =
-      event.key === "ArrowUp" || event.key === "ArrowLeft"
-        ? -1
-        : event.key === "ArrowDown" || event.key === "ArrowRight"
-          ? 1
-          : 0
-    if (!direction) return
-
-    event.preventDefault()
-    setTarget(targetRef.current + direction, true)
-  }
-
-  const handleItemClick = (index: number) => {
-    if (suppressClickRef.current) {
-      suppressClickRef.current = false
-      return
-    }
-
-    setTarget(index, true)
-    onItemClickRef.current?.(index, items[index])
-  }
-
   const rootStyle = {
     "--ow-text-color": textColor,
     "--ow-active-color": activeColor,
     "--ow-x-padding": `${xPadding}px`,
     "--ow-longest": String(longest),
     ...(hasAuto ? { containerType: "inline-size" as const } : {})
-  } as unknown as CSSProperties
+  } as CSSProperties
 
   return (
-    <div
-      ref={rootRef}
-      role="listbox"
-      tabIndex={0}
+    <Listbox
       aria-label="Article navigation"
-      className={`relative h-full w-full touch-none overflow-hidden outline-none select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}${className ? ` ${className}` : ""}`}
+      activation="automatic"
+      keepInView={false}
+      value={items[clamp(selectedIndex, items.length)] ?? null}
+      onValueChange={(value, details) => {
+        if (typeof value !== "string") return
+        if (details.reason === "item-press") {
+          if (suppressClickRef.current) {
+            suppressClickRef.current = false
+            return
+          }
+        } else {
+          suppressClickRef.current = false
+        }
+        const index = items.indexOf(value)
+        if (index === -1) return
+        setTarget(index, true)
+        onItemClickRef.current?.(index, value)
+      }}
+      ref={rootRef}
+      className={cn(
+        "relative h-full w-full touch-none overflow-hidden outline-none select-none",
+        dragging ? "cursor-grabbing" : "cursor-grab",
+        className
+      )}
       style={rootStyle}
-      onKeyDown={handleKeyDown}
+      render={<div />}
       onPointerCancel={handlePointerEnd}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerEnd}
-      onWheel={handleWheel}
     >
       <div
         ref={innerRef}
@@ -302,25 +322,24 @@ export default function OptionWheel({
         style={{ fontSize: hasAuto ? autoFontSizeValue : `${fontSize}rem` }}
       >
         {items.map((item, index) => (
-          <div
-            className="absolute top-1/2 left-[var(--ow-x-padding)] origin-left cursor-pointer leading-none whitespace-nowrap will-change-[filter,opacity,transform]"
-            data-cursor="interactive"
-            key={`${item}-${index}`}
+          <ListboxItem
+            key={index}
+            value={item}
             ref={(element) => {
               itemRefs.current[index] = element
             }}
-            aria-selected={selectedIndex === index}
-            style={{
-              fontWeight: selectedIndex === index ? 600 : 400,
+            className="absolute top-1/2 left-[var(--ow-x-padding)] origin-left cursor-pointer leading-none whitespace-nowrap will-change-[filter,opacity,transform]"
+            style={(state) => ({
+              fontWeight: state.selected ? 600 : 400,
               color:
                 "color-mix(in srgb, var(--ow-active-color) calc(var(--ow-position, 0) * 100%), var(--ow-text-color))"
-            }}
-            onClick={() => handleItemClick(index)}
+            })}
+            render={(props) => <div {...props} data-cursor="interactive" />}
           >
             {item}
-          </div>
+          </ListboxItem>
         ))}
       </div>
-    </div>
+    </Listbox>
   )
 }

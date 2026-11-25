@@ -4,6 +4,10 @@ This is a personal blog built with Next.js. Articles are MDX files in `content/p
 
 Frontmatter fields: `title`, `slug`, `excerpt`, `publishDate`, `lastEditedTime`, `locale`, `tags`, `draft`, optional `banner` (a path under `public/`). Headings are indexed automatically — write `##`/`###` (or `#` when a document has no lower levels) and the reader links them. Article content may use MDX/JSX; pass components to `MarkdownContent` in `src/app/posts/[slug]/page.tsx` to make them available.
 
+## UI SDK
+
+before using ui-sdk, read node_modules/@ui-sdk/react/docs/llms.txt. To build a new component, also search node_modules/@ui-sdk/react/docs/core.md by heading, and read rendering.md next to it.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

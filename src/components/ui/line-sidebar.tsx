@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -91,11 +92,12 @@ export function LineSidebar({
     number | null
   >(defaultActive)
   const selectedIndex = activeIndex ?? uncontrolledActiveIndex
+  useLayoutEffect(() => {
+    activeRef.current = selectedIndex
+    smoothingRef.current = smoothing
+  }, [selectedIndex, smoothing])
 
-  activeRef.current = selectedIndex
-  smoothingRef.current = smoothing
-
-  const runFrame = useCallback((now: number) => {
+  const runFrame = useCallback(function runFrame(now: number) {
     const deltaTime = Math.min((now - lastRef.current) / 1000, 0.05)
     lastRef.current = now
     const timeConstant = Math.max(smoothingRef.current, 1) / 1000

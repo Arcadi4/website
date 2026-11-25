@@ -1,12 +1,12 @@
 "use client"
 
-import { memo, MutableRefObject, useEffect, useMemo, useRef } from "react"
+import { memo, useEffect, useMemo, useRef, type MutableRefObject } from "react"
 import type {
   AxisRange,
   ProximityShadowTuning,
   ShadowOffsetResult
 } from "./proximityLinkMath"
-import type { ProximityLinkProps } from "./ProximityLink.types"
+import type { ProximityLinkProps } from "./ProximityLink"
 import {
   createShadowOffsetComputer,
   createVariationSettingsCache,
@@ -14,7 +14,7 @@ import {
   parseVariationSettings
 } from "./proximityLinkMath"
 
-export interface ProximityShadowTextProps extends Required<
+interface ProximityShadowTextProps extends Required<
   Pick<
     ProximityLinkProps,
     | "fromFontVariationSettings"
