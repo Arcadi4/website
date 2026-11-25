@@ -2,7 +2,6 @@
 
 import {
   type CSSProperties,
-  type KeyboardEvent,
   type PointerEvent,
   useEffect,
   useLayoutEffect,
@@ -11,6 +10,7 @@ import {
   useState,
   type WheelEvent
 } from "react"
+import { Listbox, ListboxItem } from "@ui-sdk/react/listbox"
 
 export interface OptionWheelProps {
   readonly items: readonly string[]
@@ -250,29 +250,6 @@ export default function OptionWheel({
     if (suppressClickRef.current) setTarget(targetRef.current, true)
   }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const direction =
-      event.key === "ArrowUp" || event.key === "ArrowLeft"
-        ? -1
-        : event.key === "ArrowDown" || event.key === "ArrowRight"
-          ? 1
-          : 0
-    if (!direction) return
-
-    event.preventDefault()
-    setTarget(targetRef.current + direction, true)
-  }
-
-  const handleItemClick = (index: number) => {
-    if (suppressClickRef.current) {
-      suppressClickRef.current = false
-      return
-    }
-
-    setTarget(index, true)
-    onItemClickRef.current?.(index, items[index])
-  }
-
   const rootStyle = {
     "--ow-text-color": textColor,
     "--ow-active-color": activeColor,
@@ -282,14 +259,30 @@ export default function OptionWheel({
   } as unknown as CSSProperties
 
   return (
-    <div
-      ref={rootRef}
-      role="listbox"
-      tabIndex={0}
+    <Listbox
       aria-label="Article navigation"
+      activation="automatic"
+      keepInView={false}
+      value={items[clamp(selectedIndex, items.length)] ?? null}
+      onValueChange={(value, details) => {
+        if (typeof value !== "string") return
+        if (details.reason === "item-press") {
+          if (suppressClickRef.current) {
+            suppressClickRef.current = false
+            return
+          }
+        } else {
+          suppressClickRef.current = false
+        }
+        const index = items.indexOf(value)
+        if (index === -1) return
+        setTarget(index, true)
+        onItemClickRef.current?.(index, value)
+      }}
+      ref={rootRef}
       className={`relative h-full w-full touch-none overflow-hidden outline-none select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}${className ? ` ${className}` : ""}`}
       style={rootStyle}
-      onKeyDown={handleKeyDown}
+      render={<div />}
       onPointerCancel={handlePointerEnd}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -302,25 +295,24 @@ export default function OptionWheel({
         style={{ fontSize: hasAuto ? autoFontSizeValue : `${fontSize}rem` }}
       >
         {items.map((item, index) => (
-          <div
-            className="absolute top-1/2 left-[var(--ow-x-padding)] origin-left cursor-pointer leading-none whitespace-nowrap will-change-[filter,opacity,transform]"
-            data-cursor="interactive"
-            key={`${item}-${index}`}
+          <ListboxItem
+            key={item}
+            value={item}
             ref={(element) => {
               itemRefs.current[index] = element
             }}
-            aria-selected={selectedIndex === index}
-            style={{
-              fontWeight: selectedIndex === index ? 600 : 400,
+            className="absolute top-1/2 left-[var(--ow-x-padding)] origin-left cursor-pointer leading-none whitespace-nowrap will-change-[filter,opacity,transform]"
+            style={(state) => ({
+              fontWeight: state.selected ? 600 : 400,
               color:
                 "color-mix(in srgb, var(--ow-active-color) calc(var(--ow-position, 0) * 100%), var(--ow-text-color))"
-            }}
-            onClick={() => handleItemClick(index)}
+            })}
+            render={(props) => <div {...props} data-cursor="interactive" />}
           >
             {item}
-          </div>
+          </ListboxItem>
         ))}
       </div>
-    </div>
+    </Listbox>
   )
 }
