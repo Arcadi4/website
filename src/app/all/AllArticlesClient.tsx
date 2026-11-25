@@ -53,7 +53,7 @@ function ArchiveArticle({
           href={`/posts/${article.slug}`}
           className="col-span-4 min-h-0 min-w-0 self-start"
         >
-          <h2 className="font-funnel-display text-4xl leading-none text-pretty transition-colors duration-300 hover:text-klein focus-visible:text-klein">
+          <h2 className="font-funnel-display text-5xl leading-none text-pretty transition-colors duration-300 hover:text-klein focus-visible:text-klein">
             {article.title}
           </h2>
         </Link>
@@ -247,7 +247,7 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
           durationMs={500}
         >
           <Link
-            className="font-funnel-display text-4xl leading-none transition-colors hover:text-klein focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+            className="font-funnel-display text-5xl leading-none transition-colors hover:text-klein focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
             href="/"
           >
             @4rcadia
@@ -260,7 +260,7 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
         >
           <SiteNav
             items={menuItems.filter((item) => item.href !== "/all")}
-            className="flex flex-col font-funnel-display text-4xl leading-none"
+            className="flex flex-col font-funnel-display text-5xl leading-none"
             delayMs={320}
             delayStepMs={55}
           />
@@ -269,7 +269,7 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
         <Entrance
           animationClassName="fade-in slide-in-from-left-8"
           as="h1"
-          className="z-20 col-span-6 col-start-1 row-span-1 row-start-5 flex items-start self-start font-funnel-display text-9xl leading-none whitespace-nowrap"
+          className="z-20 col-span-6 col-start-1 row-span-1 row-start-5 flex items-start self-start font-funnel-display text-5xl leading-none whitespace-nowrap"
           delayMs={240}
           durationMs={700}
         >

@@ -328,7 +328,7 @@ export default function OptionWheel({
             ref={(element) => {
               itemRefs.current[index] = element
             }}
-            className="absolute top-1/2 left-[var(--ow-x-padding)] origin-left cursor-pointer leading-none whitespace-nowrap will-change-[filter,opacity,transform]"
+            className="absolute top-1/2 left-[var(--ow-x-padding)] origin-left cursor-pointer font-funnel-display leading-none whitespace-nowrap will-change-[filter,opacity,transform]"
             style={(state) => ({
               fontWeight: state.selected ? 600 : 400,
               color:

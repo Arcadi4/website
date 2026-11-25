@@ -96,7 +96,7 @@ export function ErrorPageClient({
           <Entrance
             animationClassName="fade-in slide-in-from-left-4"
             as="p"
-            className="z-20 col-span-2 col-start-1 row-start-3 self-start font-funnel-display text-4xl leading-none xl:text-5xl"
+            className="z-20 col-span-2 col-start-1 row-start-3 self-start font-funnel-display text-5xl leading-none"
             delayMs={500}
             durationMs={500}
           >
@@ -106,7 +106,7 @@ export function ErrorPageClient({
           <Entrance
             animationClassName="fade-in slide-in-from-bottom-4"
             as="h1"
-            className="z-20 col-span-3 col-start-3 row-span-2 row-start-5 self-start font-funnel-display text-4xl text-trim-cap font-normal text-pretty xl:text-5xl"
+            className="z-20 col-span-3 col-start-3 row-span-2 row-start-5 self-start font-funnel-display text-5xl text-trim-cap font-normal text-pretty"
             delayMs={500}
             durationMs={500}
           >
@@ -118,7 +118,7 @@ export function ErrorPageClient({
           <Entrance
             animationClassName="fade-in slide-in-from-bottom-4"
             as="p"
-            className="z-20 col-span-3 col-start-8 row-span-2 row-start-4 self-start font-funnel-display text-4xl text-pretty xl:text-5xl"
+            className="z-20 col-span-3 col-start-8 row-span-2 row-start-4 self-start font-funnel-display text-5xl text-pretty"
             delayMs={700}
             durationMs={500}
           >
@@ -137,7 +137,7 @@ export function ErrorPageClient({
             <Entrance
               animationClassName="fade-in slide-in-from-right-4"
               as="button"
-              className="w-fit cursor-pointer text-left font-funnel-display text-3xl leading-none transition-colors hover:text-acid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-acid xl:text-5xl"
+              className="w-fit cursor-pointer text-left font-funnel-display text-5xl leading-none transition-colors hover:text-acid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-acid"
               delayMs={700}
               durationMs={500}
               onClick={retry}
@@ -154,7 +154,7 @@ export function ErrorPageClient({
             delayStepMs={70}
             prefix=""
             suffix=" ←"
-            linkClassName="w-fit font-funnel-display text-3xl transition-all hover:text-acid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-acid xl:text-5xl"
+            linkClassName="w-fit font-funnel-display text-5xl transition-all hover:text-acid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-acid"
           />
         </nav>
       </div>

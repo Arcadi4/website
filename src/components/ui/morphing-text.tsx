@@ -239,7 +239,7 @@ export function MorphingText({
     <div
       className={cn(
         !unstyled &&
-          "relative mx-auto h-16 w-full max-w-3xl text-center font-sans text-[40pt] leading-none font-bold md:h-24 lg:text-[6rem]",
+          "relative mx-auto h-16 w-full max-w-3xl text-center font-funnel-display text-[40pt] leading-none font-bold md:h-24 lg:text-[6rem]",
         className
       )}
       style={{ filter: `url(#${filterId}) blur(0.6px)` }}

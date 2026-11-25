@@ -65,18 +65,6 @@ h6,
   .separator {
     @apply pointer-events-none border-0 border-gray-400;
   }
-
-  .h1-hero {
-    @apply text-8xl leading-[0.8] font-bold;
-  }
-
-  .large-p {
-    @apply text-2xl leading-none;
-  }
-
-  .large-link {
-    @apply text-5xl leading-none;
-  }
 }
 
 html {

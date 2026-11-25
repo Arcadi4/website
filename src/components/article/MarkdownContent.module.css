@@ -1,6 +1,6 @@
 .content {
   color: color-mix(in srgb, var(--color-foreground) 82%, transparent);
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.85;
   letter-spacing: -0.012em;
   min-width: 0;
@@ -131,7 +131,7 @@
   font-style: italic;
   margin-block: 2em;
   padding: 0.2em 0 0.2em 1.15em;
-  font-size: 1.02em;
+  font-size: 1em;
   line-height: 1.7;
 }
 
@@ -258,7 +258,7 @@
 .content table {
   border-collapse: collapse;
   display: block;
-  font-size: 0.92em;
+  font-size: 1em;
   margin-block: 2.2em;
   overflow-x: auto;
   text-align: left;
@@ -361,14 +361,14 @@
 
 /* Footnotes / small */
 .content small {
-  font-size: 0.88em;
+  font-size: 0.75em;
   line-height: 1.6;
   color: color-mix(in srgb, var(--color-foreground) 65%, transparent);
 }
 
 .content [data-footnotes] {
   margin-block: 2.2em;
-  font-size: 0.88em;
+  font-size: 0.75em;
 }
 
 /* The generated endnote label is meant for assistive tech only */

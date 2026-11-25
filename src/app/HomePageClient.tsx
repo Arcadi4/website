@@ -34,7 +34,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
           />
         </ScenePersistentElement>
 
-        <header className="col-span-4 col-start-3 row-start-1 self-start text-sm leading-none">
+        <header className="col-span-4 col-start-3 row-start-1 self-start text-xs leading-none">
           <span className="text-klein">©</span> 2026 4rcadia
           <br />
           <span>blog.arcadia.moe</span>
@@ -47,7 +47,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
         </SceneReveal>
 
         <SceneReveal direction="left" distance="far" durationMs={980}>
-          <p className="col-span-7 col-start-4 row-span-3 row-start-3 self-center font-funnel-display text-4xl text-trim-cap leading-none text-klein">
+          <p className="col-span-7 col-start-4 row-span-3 row-start-3 self-center font-funnel-display text-5xl text-trim-cap leading-none text-klein">
             studying <span className="text-black">mathematics</span>;
             <br />
             i am (becoming) a <span className="text-black">full stack dev</span>
@@ -135,7 +135,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
                     href={item.href}
                     key={item.href}
                     label={item.name}
-                    className="my-2.5 text-6xl"
+                    className="my-2.5 font-funnel-display text-6xl"
                     shadowColor="#000000"
                   />
                 </div>
@@ -161,7 +161,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
                     href={item.href}
                     key={item.href}
                     label={item.name}
-                    className="my-2.5 text-6xl"
+                    className="my-2.5 font-funnel-display text-6xl"
                     shadowColor="#000000"
                   />
                 </div>
@@ -211,7 +211,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
               aria-hidden="true"
               className="pointer-events-none relative col-span-9 col-start-3 row-span-1 row-start-3 -mt-4 origin-right bg-magenta"
             >
-              <h2 className="absolute right-0 bottom-0 font-funnel-display text-9xl text-trim-cap leading-none tracking-tighter">
+              <h2 className="absolute right-0 bottom-0 font-funnel-display text-5xl text-trim-cap leading-none tracking-tighter">
                 Latest Articles
               </h2>
             </div>
@@ -235,7 +235,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
           >
             <div
               aria-hidden="true"
-              className="col-end-12 row-start-1 justify-self-end font-funnel-display text-9xl text-trim-cap leading-none tracking-tighter text-white"
+              className="col-end-12 row-start-1 justify-self-end font-funnel-display text-5xl text-trim-cap leading-none tracking-tighter text-white"
             >
               {`{${String(index + 1).padStart(2, "0")}}`}
             </div>
@@ -252,7 +252,7 @@ export function HomePageClient({ articles }: HomePageClientProps) {
             >
               <div className="absolute inset-0 -z-10 col-span-8 col-start-2 -my-4 origin-left bg-acid transition-all duration-500 ease-[cubic-bezier(.76,0,.24,1)] group-hover:scale-x-[1.05] group-hover:bg-klein group-focus-visible:scale-x-[1.05] motion-reduce:transition-none" />
               <div className="col-span-4 col-start-2">
-                <h2 className="text-justify font-funnel-display text-4xl font-medium">
+                <h2 className="text-justify font-funnel-display text-5xl font-medium">
                   {article.title}
                 </h2>
               </div>
@@ -320,12 +320,12 @@ export function HomePageClient({ articles }: HomePageClientProps) {
               className="absolute inset-0 origin-left scale-x-0 bg-acid transition-transform duration-600 ease-[cubic-bezier(.76,0,.24,1)] group-hover:scale-x-100 motion-reduce:transition-none"
             />
             <span className="z-1 col-span-7 flex gap-2 align-top font-funnel-display transition-colors duration-300 group-hover:text-foreground group-focus-visible:text-foreground motion-reduce:transition-none">
-              <span className="text-9xl text-trim-cap leading-none font-medium tracking-tighter">
+              <span className="text-5xl text-trim-cap leading-none font-medium tracking-tighter">
                 All posts
               </span>
               <span className="text-base">({articles.length})</span>
             </span>
-            <span className="z-1 col-start-10 justify-self-end font-funnel-display text-7xl transition-colors duration-300 group-hover:text-foreground group-focus-visible:text-foreground motion-reduce:transition-none">
+            <span className="z-1 col-start-10 justify-self-end font-funnel-display text-5xl transition-colors duration-300 group-hover:text-foreground group-focus-visible:text-foreground motion-reduce:transition-none">
               →
             </span>
           </Link>

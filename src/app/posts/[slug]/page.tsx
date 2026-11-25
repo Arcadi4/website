@@ -80,7 +80,7 @@ export default async function Post({
           durationMs={500}
         >
           <Link
-            className="font-funnel-display text-4xl leading-none tracking-[-0.04em] transition-colors hover:text-klein focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
+            className="font-funnel-display text-5xl leading-none tracking-[-0.04em] transition-colors hover:text-klein focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-klein"
             href="/"
           >
             @4rcadia
@@ -93,7 +93,7 @@ export default async function Post({
         >
           <SiteNav
             items={menuItems.filter((item) => item.href !== "/all")}
-            className="flex flex-col items-end font-funnel-display text-4xl leading-none max-md:text-3xl"
+            className="flex flex-col items-end font-funnel-display text-5xl leading-none"
             delayMs={240}
             delayStepMs={55}
           />
@@ -114,7 +114,7 @@ export default async function Post({
           </h1>
         </Entrance>
 
-        <div className="col-span-6 col-start-2 row-start-3 mt-3 flex flex-wrap gap-x-6 gap-y-2 self-start text-sm leading-tight max-md:col-span-full max-md:col-start-1">
+        <div className="col-span-6 col-start-2 row-start-3 mt-3 flex flex-wrap gap-x-6 gap-y-2 self-start text-xs leading-tight max-md:col-span-full max-md:col-start-1">
           <span>
             <span className="text-foreground/45">Published</span>{" "}
             {formatDate(post.publishDate)}
@@ -166,16 +166,16 @@ export default async function Post({
         {/* Mobile TOC */}
         <details className="group col-span-full lg:hidden">
           <summary className="flex cursor-pointer list-none items-center justify-between border-y border-foreground py-3">
-            <span className="text-sm tracking-[-0.02em]">
+            <span className="text-xs tracking-[-0.02em]">
               Contents — {toc.length}
             </span>
-            <span className="text-lg leading-none transition-transform group-open:rotate-45">
+            <span className="font-funnel-display text-lg leading-none transition-transform group-open:rotate-45">
               +
             </span>
           </summary>
           <ol className="mt-4 grid gap-2">
             {toc.length === 0 ? (
-              <li className="text-sm text-foreground/40">
+              <li className="text-xs text-foreground/40">
                 No sections — linear reading.
               </li>
             ) : (
@@ -184,7 +184,7 @@ export default async function Post({
                   key={item.id}
                   className="flex gap-3 border-b border-foreground/10 py-2 last:border-0"
                 >
-                  <span className="text-sm text-foreground/30">
+                  <span className="text-xs text-foreground/30">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <a
@@ -251,7 +251,7 @@ export default async function Post({
               { name: "All posts", href: "/all" }
             ]}
             className="flex flex-col items-end max-md:items-start"
-            linkClassName="font-funnel-display text-4xl leading-none tracking-[-0.03em] hover:text-klein max-md:text-3xl"
+            linkClassName="font-funnel-display text-5xl leading-none tracking-[-0.03em] hover:text-klein"
             prefix="← "
             delayMs={120}
             delayStepMs={80}
