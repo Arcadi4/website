@@ -7,7 +7,7 @@ import { Input, InputClear, InputGroup } from "@ui-sdk/react/input"
 import { Toggle, ToggleGroup } from "@ui-sdk/react/toggle"
 import { menuItems } from "@/app/posts/menuItems"
 import { Entrance } from "@/components/animations/Entrance"
-import { Menu } from "@/components/layout/Menu"
+import { SiteNav } from "@/components/layout/SiteNav"
 import type { ArticleMeta } from "@/lib/content"
 import { formatDate } from "@/lib/utils"
 import HalftoneReveal from "@/components/HalftoneReveal"
@@ -258,7 +258,7 @@ export function AllArticlesClient({ articles }: AllArticlesClientProps) {
           aria-label="Main navigation"
           className="z-20 col-span-3 col-start-8 row-span-2 row-start-1 self-start"
         >
-          <Menu
+          <SiteNav
             items={menuItems.filter((item) => item.href !== "/all")}
             className="flex flex-col font-funnel-display text-4xl leading-none"
             delayMs={320}

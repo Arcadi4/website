@@ -5,7 +5,7 @@ import ProximityLink from "@/components/proximity/ProximityLink"
 import { EaseIn } from "@/components/animations/EaseIn"
 import type { LinkItem } from "@/app/posts/menuItems"
 
-type MenuProps = {
+type SiteNavProps = {
   readonly items: readonly LinkItem[]
   readonly className?: string
   readonly itemClassName?: string
@@ -18,7 +18,7 @@ type MenuProps = {
   readonly onSeen?: boolean
 }
 
-export function Menu({
+export function SiteNav({
   items,
   className = "flex flex-col",
   itemClassName,
@@ -29,7 +29,7 @@ export function Menu({
   delayMs = 0,
   delayStepMs = 0,
   onSeen = false
-}: MenuProps) {
+}: SiteNavProps) {
   return (
     <div className={className}>
       {items.map((item, index) => (
