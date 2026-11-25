@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@ui-sdk/react/button"
+
 import type { ProximityLinkProps } from "@/components/proximity/ProximityLink"
 import ProximityLink from "@/components/proximity/ProximityLink"
 import { EaseIn } from "@/components/animations/EaseIn"
@@ -42,22 +44,32 @@ export function SiteNav({
           {itemClassName ? (
             <div className={itemClassName}>
               {prefix}
-              <ProximityLink
-                href={item.href}
-                label={item.name}
-                shadowColor={shadowColor}
-                className={linkClassName}
-              />
+              <Button
+                render={
+                  <ProximityLink
+                    href={item.href}
+                    label={item.name}
+                    shadowColor={shadowColor}
+                    className={linkClassName}
+                  />
+                }
+              >
+                {item.name}
+              </Button>
               {suffix}
             </div>
           ) : (
-            <ProximityLink
-              href={item.href}
-              shadowColor={shadowColor}
-              className={linkClassName}
+            <Button
+              render={
+                <ProximityLink
+                  href={item.href}
+                  shadowColor={shadowColor}
+                  className={linkClassName}
+                />
+              }
             >
               {prefix + item.name + (suffix ?? "")}
-            </ProximityLink>
+            </Button>
           )}
         </EaseIn>
       ))}
