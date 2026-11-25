@@ -1,7 +1,9 @@
 "use client"
 
 import NextLink from "next/link"
-import { memo, MutableRefObject, useMemo, useRef } from "react"
+import { memo, useMemo, useRef } from "react"
+import type { AnchorHTMLAttributes, MutableRefObject } from "react"
+import { useCallback } from "react"
 import ProximityShadowText, {
   setProximityShadowPointerPosition
 } from "./ProximityShadowText"
@@ -40,12 +42,28 @@ function ProximityLink({
   onMouseLeave,
   ...props
 }: ProximityLinkProps) {
+  const { ref: forwardedRef, ...forwardedProps } = props as typeof props & {
+    ref?:
+      | ((node: HTMLAnchorElement | null) => void)
+      | { current: HTMLAnchorElement | null }
+  }
   const text = children ?? label
   if (!text) {
     throw new Error("ProximityLink requires either children or label prop")
   }
 
   const containerRef = useRef<HTMLAnchorElement | null>(null)
+  const setContainerRef = useCallback(
+    (node: HTMLAnchorElement | null) => {
+      containerRef.current = node
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node)
+      } else if (forwardedRef) {
+        forwardedRef.current = node
+      }
+    },
+    [forwardedRef]
+  )
   const isHoveredRef = useRef(false)
   const resolvedShadowTuning = useMemo(
     () => ({ ...defaultShadowTuning, ...shadowTuning }),
@@ -86,14 +104,14 @@ function ProximityLink({
   if (isExternal) {
     return (
       <a
-        ref={containerRef}
+        ref={setContainerRef}
         href={href}
         className={linkClass}
         target="_blank"
         rel="noopener noreferrer"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        {...props}
+        {...forwardedProps}
       >
         {proximityContent}
       </a>
@@ -102,12 +120,12 @@ function ProximityLink({
 
   return (
     <NextLink
-      ref={containerRef}
+      ref={setContainerRef}
       href={href}
       className={linkClass}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      {...props}
+      {...forwardedProps}
     >
       {proximityContent}
     </NextLink>
