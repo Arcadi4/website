@@ -172,6 +172,12 @@ importers:
       '@shikijs/rehype':
         specifier: ^4.6.0
         version: 4.6.0
+      '@ui-sdk/core':
+        specifier: 0.1.0-beta.16
+        version: 0.1.0-beta.16
+      '@ui-sdk/react':
+        specifier: 0.1.0-beta.16
+        version: 0.1.0-beta.16(@types/react@19.3.0)(@ui-sdk/core@0.1.0-beta.16)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.4.6(@babel/core@7.29.7)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
@@ -1819,6 +1825,20 @@ packages:
     engines: {node: '>=16.20.0'}
     cpu: [x64]
     os: [win32]
+
+  '@ui-sdk/core@0.1.0-beta.16':
+    resolution: {integrity: sha512-I2GMqOviLS/lYfIj2lTqKLbae0V9uSnysK+bSdbhuw2De8zNvrLZiDTc0qzsPNiZvB/bMmUZJS5UDA5Q2Pq4Ng==}
+
+  '@ui-sdk/react@0.1.0-beta.16':
+    resolution: {integrity: sha512-pCM1Vb5Dycj05E63kY1CeX/jab9OlfDCGwhs29QtVenX0YrYzSRgkLYaHWscbew2gxVCBwcr8KBkh5BgH9eV+Q==}
+    peerDependencies:
+      '@types/react': '>=19.2.10'
+      '@ui-sdk/core': ^0.1.0-beta.16
+      react: '>=19'
+      react-dom: '>=19'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   '@ungap/structured-clone@1.3.3':
     resolution: {integrity: sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==}
@@ -4938,6 +4958,16 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
+
+  '@ui-sdk/core@0.1.0-beta.16': {}
+
+  '@ui-sdk/react@0.1.0-beta.16(@types/react@19.3.0)(@ui-sdk/core@0.1.0-beta.16)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+    dependencies:
+      '@ui-sdk/core': 0.1.0-beta.16
+      react: 19.3.1
+      react-dom: 19.3.1(react@19.3.1)
+    optionalDependencies:
+      '@types/react': 19.3.0
 
   '@ungap/structured-clone@1.3.3': {}
 
