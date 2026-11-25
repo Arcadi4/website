@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 const SIZE = 64
 const OFFSET = SIZE / 2
 const INTERACTIVE_EXIT_DELAY_MS = 100
+const PRESS_DELAY_MS = 150
 const INTERACTIVE_SELECTOR = [
   "[data-cursor='interactive']",
   "a",
@@ -45,6 +46,7 @@ export default function CustomCursor() {
     let holdTimer: number | undefined
     let interactiveTimer: number | undefined
     let prevInteractive = false
+    let cursorEnabled = false
     const moveTo = (x: number, y: number) => {
       position = { x, y }
       const transform = `translate3d(${x - OFFSET}px, ${y - OFFSET}px, 0)`
@@ -86,7 +88,10 @@ export default function CustomCursor() {
 
     const handlePointerMove = (event: PointerEvent) => {
       moveTo(event.clientX, event.clientY)
-      document.body.classList.add("custom-cursor-enabled")
+      if (!cursorEnabled) {
+        cursorEnabled = true
+        document.body.classList.add("custom-cursor-enabled")
+      }
       setInteractiveTarget(isInteractive(event.target))
     }
 
@@ -95,7 +100,7 @@ export default function CustomCursor() {
       holdTimer = window.setTimeout(() => {
         holdTimer = undefined
         setPressed(true)
-      }, 150)
+      }, PRESS_DELAY_MS)
     }
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true })
@@ -124,7 +129,7 @@ export default function CustomCursor() {
       window.removeEventListener("contextmenu", clearPress)
       clearTimeout(holdTimer)
       clearTimeout(interactiveTimer)
-      document.body.classList.remove("custom-cursor-enabled")
+      if (cursorEnabled) document.body.classList.remove("custom-cursor-enabled")
     }
   }, [])
 
@@ -133,13 +138,10 @@ export default function CustomCursor() {
       <div
         ref={fillRef}
         aria-hidden="true"
+        style={{ transform: "translate3d(-100vw, -100vh, 0)" }}
         className={cn(
           "pointer-events-none fixed top-0 left-0 z-9999 will-change-transform",
-          pressed
-            ? "mix-blend-multiply"
-            : interactive
-              ? "mix-blend-exclusion"
-              : "mix-blend-multiply"
+          interactive && !pressed ? "mix-blend-exclusion" : "mix-blend-multiply"
         )}
       >
         <div
@@ -156,6 +158,7 @@ export default function CustomCursor() {
       <div
         ref={outlineRef}
         aria-hidden="true"
+        style={{ transform: "translate3d(-100vw, -100vh, 0)" }}
         className="pointer-events-none fixed top-0 left-0 z-9999 size-16 will-change-transform"
       >
         <div

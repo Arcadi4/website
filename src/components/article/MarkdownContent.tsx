@@ -1,18 +1,14 @@
 import * as runtime from "react/jsx-runtime"
-import type { ComponentType, ElementType } from "react"
+import type { ComponentType } from "react"
 import { cn } from "@/lib/utils"
 import styles from "./MarkdownContent.module.css"
 
-/** Components article content may reference by name, resolved at render time. */
-type MdxComponents = Record<string, ElementType>
-
-type MdxContent = ComponentType<{ components?: MdxComponents }>
+/** Compiled MDX function body emitted by the content layer. */
+type MdxContent = ComponentType
 
 type MarkdownContentProps = {
   readonly className?: string
-  /** Compiled MDX function body emitted by the content layer. */
   readonly code: string
-  readonly components?: MdxComponents
 }
 
 const cached = new Map<string, MdxContent>()
@@ -33,16 +29,11 @@ function compile(code: string): MdxContent {
  * MDX boundary for article bodies; its CSS applies the restrained Swiss reading
  * typography without inventing a second document model.
  */
-export function MarkdownContent({
-  className,
-  code,
-  components
-}: MarkdownContentProps) {
+export function MarkdownContent({ className, code }: MarkdownContentProps) {
   const Content = compile(code)
 
-  return (
-    <article className={cn(styles.content, className)}>
-      <Content components={components} />
-    </article>
-  )
+  // oxlint-disable-next-line react/static-components -- compile() caches one stable component per immutable MDX body.
+  const content = <Content />
+
+  return <article className={cn(styles.content, className)}>{content}</article>
 }

@@ -10,9 +10,9 @@ import { Entrance } from "@/components/animations/Entrance"
 import { SiteNav } from "@/components/layout/SiteNav"
 import type { ArticleMeta } from "@/lib/content"
 import { formatDate } from "@/lib/utils"
-import HalftoneReveal from "@/components/HalftoneReveal"
+import HalftoneReveal from "@/components/canvasui/HalftoneReveal"
 import { colorAcid, colorKlein, colorMagenta } from "@/lib/colors"
-import OptionWheel from "@/components/OptionWheel"
+import OptionWheel from "@/components/ui/OptionWheel"
 
 type AllArticlesClientProps = {
   readonly articles: readonly ArticleMeta[]

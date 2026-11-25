@@ -1,10 +1,11 @@
-import Link from "@/components/Link"
+import Link from "@/components/ui/Link"
+const COPYRIGHT_YEAR = new Date().getFullYear()
 
 export default function Footer() {
   return (
     <footer className="relative grid h-32 w-dvw grid-cols-12 gap-x-4 bg-klein px-8">
       <div className="absolute bottom-8 col-span-full col-start-4 row-start-1 font-mono text-sm text-white">
-        &copy; {new Date().getFullYear()} 4rcadia.
+        &copy; {COPYRIGHT_YEAR} 4rcadia.
         <br />
         All articles and web design licensed under CC BY-NC 4.0 if not otherwise
         specified.

@@ -1,5 +1,5 @@
 "use client"
-import { createElement, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import type {
   AnimationEvent,
   AnimationEventHandler,
@@ -47,7 +47,7 @@ export function Entrance<T extends EntranceElement = "div">({
   ...props
 }: EntranceProps<T>) {
   const [hasFinished, setHasFinished] = useState(false)
-  const Component: ElementType = as ?? "div"
+  const Component = (as ?? "div") as ElementType
   const targetRef = useRef<HTMLElement | null>(null)
 
   const { entered, reduceMotion } = useEntranceAnimation({
@@ -72,24 +72,30 @@ export function Entrance<T extends EntranceElement = "div">({
     !hasFinished && !reduceMotion && (onSeen ? entered : true)
   const isHidden = onSeen && !entered && !hasFinished && !reduceMotion
 
-  return createElement(Component, {
-    ...props,
-    ...(onSeen ? { ref: targetRef } : {}),
-    className: clsx(
-      className,
-      isHidden && "opacity-0",
-      shouldAnimate && "animate-in motion-reduce:animate-none",
-      shouldAnimate && animationClassName
-    ),
-    onAnimationEnd: shouldAnimate ? handleAnimationEnd : forwardedAnimationEnd,
-    style: shouldAnimate
-      ? {
-          ...style,
-          animationDelay: `${onSeen ? 0 : delayMs}ms`,
-          animationDuration: `${durationMs}ms`,
-          animationFillMode: "backwards",
-          animationTimingFunction: "ease-out"
-        }
-      : style
-  })
+  return (
+    <Component
+      {...props}
+      ref={onSeen ? targetRef : undefined}
+      className={clsx(
+        className,
+        isHidden && "opacity-0",
+        shouldAnimate && "animate-in motion-reduce:animate-none",
+        shouldAnimate && animationClassName
+      )}
+      onAnimationEnd={
+        shouldAnimate ? handleAnimationEnd : forwardedAnimationEnd
+      }
+      style={
+        shouldAnimate
+          ? {
+              ...style,
+              animationDelay: `${onSeen ? 0 : delayMs}ms`,
+              animationDuration: `${durationMs}ms`,
+              animationFillMode: "backwards",
+              animationTimingFunction: "ease-out"
+            }
+          : style
+      }
+    />
+  )
 }

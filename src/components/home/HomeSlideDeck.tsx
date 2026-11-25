@@ -59,7 +59,7 @@ export function HomeSlideDeck({ children, labels }: HomeSlideDeckProps) {
     <Carousel
       orientation="vertical"
       page={activeIndex + 1}
-      onPageChange={(page) => setActiveIndex(page - 1)}
+      onPageChange={(page) => selectSlide(page - 1)}
       render={
         <main
           aria-label="Homepage scenes"
@@ -83,13 +83,11 @@ export function HomeSlideDeck({ children, labels }: HomeSlideDeckProps) {
                   : "future"
 
             return (
-              <CarouselItem key={labels[index]}>
+              <CarouselItem key={index}>
                 <HomeSlideStateContext.Provider value={state}>
                   <section
                     aria-label={`${index + 1} of ${slides.length}: ${labels[index]}`}
                     className="relative z-2 min-h-svh snap-start snap-always overflow-x-clip"
-                    data-home-scene
-                    data-scene-index={index}
                     data-state={state}
                   >
                     {slide}

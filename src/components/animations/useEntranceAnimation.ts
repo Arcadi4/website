@@ -26,8 +26,9 @@ function prefersReducedMotion(): boolean {
 }
 
 /**
- * 在组件挂载后触发 enter=true（支持延迟）。
- * 用于 “mount 时播放” 的 class 切换。
+ * Starts the entrance once the target crosses the viewport trigger line (or
+ * immediately when disabled), applying the configured delay. Also reports the
+ * reduced-motion preference so callers can skip animation entirely.
  */
 export function useEntranceAnimation(options: EnterOptions = {}) {
   const {

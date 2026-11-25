@@ -12,6 +12,7 @@ type SceneRevealProps = {
   readonly children: ReactElement<{
     className?: string
     style?: CSSProperties
+    onAnimationComplete?: () => void
   }>
   readonly delayMs?: number
   readonly direction?: RevealDirection
@@ -35,9 +36,9 @@ type MotionElementTag = keyof typeof motionElements
  * type so component children (e.g. next/link) keep a stable identity. Link
  * forwards props and ref to its `<a>`, so motion values reach the DOM node.
  */
-const componentMotionCache = new Map<ReactElement["type"], ComponentType<any>>()
+const componentMotionCache = new WeakMap<object, ComponentType<any>>()
 
-function getMotionElement(type: ReactElement["type"]) {
+function getMotionElement(type: object) {
   let MotionElement = componentMotionCache.get(type)
 
   if (!MotionElement) {
@@ -81,7 +82,7 @@ export function SceneReveal({
   const MotionElement =
     typeof tagName === "string" && tagName in motionElements
       ? motionElements[tagName as MotionElementTag]
-      : getMotionElement(tagName)
+      : getMotionElement(tagName as object)
 
   const distanceValue = offsetDistance[distance]
   const hiddenState = {
@@ -114,6 +115,7 @@ export function SceneReveal({
     initial: isActive ? false : hiddenState,
     animate: isActive ? visibleState : hiddenState,
     onAnimationComplete: () => {
+      children.props.onAnimationComplete?.()
       if (isActive) {
         setHasRevealed(true)
       }

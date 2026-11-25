@@ -30,7 +30,7 @@ const SHAPES: Record<Shape, number> = {
 }
 const TRIGGERS: Record<Trigger, number> = { off: 0, hover: 1, always: 2 }
 
-export interface HalftoneRevealProps {
+interface HalftoneRevealProps {
   src?: string | StaticImageData
   inkColor?: string
   paperColor?: string
@@ -227,7 +227,6 @@ const HalftoneReveal = ({
   style
 }: HalftoneRevealProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const rendererRef = useRef<Renderer | null>(null)
   const uniformsRef = useRef<Record<string, { value: unknown }> | null>(null)
   const rafRef = useRef<number | null>(null)
   const followRef = useRef<number>(follow)
@@ -258,7 +257,6 @@ const HalftoneReveal = ({
       alpha: false,
       antialias: true
     })
-    rendererRef.current = renderer
     const gl = renderer.gl
     gl.clearColor(0, 0, 0, 1)
     gl.canvas.style.width = "100%"
@@ -295,11 +293,15 @@ const HalftoneReveal = ({
 
     const rawSrc = typeof src === "string" ? src : (src as StaticImageData).src
     const isStaticImport = typeof src !== "string"
+    if (isStaticImport) {
+      const { width, height } = src as StaticImageData
+      uniforms.uImageSize.value = [width, height]
+    }
     let textureSrc = rawSrc
 
     // Local public assets (/banners/xxx) go through Next's image optimizer
     // via `/_next/image?url=&w=&q=` to serve a DPR-aware, format-negotiated
-    // variant (see public/banners: 2–3.5 MB originals -> ~30–80 KB at 640w).
+    // variant (see public/banners for the multi-megabyte originals).
     // Remote URLs are fetched directly to avoid 400s when remotePatterns
     // isn't configured (article images live on arbitrary hosts).
     if (!isStaticImport && rawSrc.startsWith("/") && !rawSrc.startsWith("//")) {
@@ -326,11 +328,14 @@ const HalftoneReveal = ({
     img.crossOrigin = "anonymous"
     img.decoding = "async"
     let didFallback = false
+    let disposed = false
     img.onload = () => {
+      if (disposed) return
       texture.image = img
       uniforms.uImageSize.value = [img.naturalWidth, img.naturalHeight]
     }
     img.onerror = () => {
+      if (disposed) return
       if (!didFallback && textureSrc !== rawSrc) {
         didFallback = true
         img.src = rawSrc
@@ -383,6 +388,9 @@ const HalftoneReveal = ({
     rafRef.current = requestAnimationFrame(loop)
 
     return () => {
+      disposed = true
+      img.onload = null
+      img.onerror = null
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       ro.disconnect()
       container.removeEventListener("pointermove", onMove)
@@ -391,7 +399,6 @@ const HalftoneReveal = ({
       const ext = gl.getExtension("WEBGL_lose_context")
       if (ext) ext.loseContext()
       if (gl.canvas.parentNode) gl.canvas.parentNode.removeChild(gl.canvas)
-      rendererRef.current = null
       uniformsRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

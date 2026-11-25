@@ -39,14 +39,6 @@ export function normalizeChildren(
   return result
 }
 
-export function calculateStaggerDelay(
-  delayMs: number,
-  index: number,
-  step: number
-): number {
-  return delayMs + index * step
-}
-
 export function warnMultiChildClassName(
   hasClassName: boolean,
   childCount: number
@@ -54,7 +46,7 @@ export function warnMultiChildClassName(
   if (process.env.NODE_ENV !== "production") {
     if (hasClassName && childCount > 1) {
       console.warn(
-        "SimpleEntrance/StretchEntrance: className with multiple children is not supported. " +
+        "EaseIn: className with multiple children is not supported. " +
           "Wrap children in an explicit container div and move className to that container."
       )
     }

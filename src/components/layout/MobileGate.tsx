@@ -115,13 +115,7 @@ function shouldBlockMobileAccess() {
 }
 
 export default function MobileGate() {
-  const [shouldBlock, setShouldBlock] = useState(() => {
-    if (typeof window === "undefined") {
-      return false
-    }
-
-    return shouldBlockMobileAccess()
-  })
+  const [shouldBlock, setShouldBlock] = useState(false)
 
   useEffect(() => {
     const updateShouldBlock = () => setShouldBlock(shouldBlockMobileAccess())

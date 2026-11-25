@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import OptionWheel from "@/components/OptionWheel"
+import OptionWheel from "@/components/ui/OptionWheel"
 import { colorMagenta } from "@/lib/colors"
 import type { TocItem } from "@/lib/toc"
 

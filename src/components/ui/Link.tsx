@@ -1,6 +1,6 @@
 import NextLink from "next/link"
 import type { AnchorHTMLAttributes } from "react"
-import { cn } from "@/lib/utils"
+import { cn, isExternalHref } from "@/lib/utils"
 import styles from "./Link.module.css"
 
 interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -21,7 +21,7 @@ export default function Link({
   variant = "underline",
   ...props
 }: LinkProps) {
-  const isExternal = href.startsWith("http") || href.startsWith("mailto:")
+  const isExternal = isExternalHref(href)
   const linkClass = cn(
     variant === "underline" && styles.underline,
     variant === "directional" && styles.directional,

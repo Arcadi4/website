@@ -47,7 +47,7 @@ const useMorphingText = (
   const textIndexRef = useRef(0)
   const morphRef = useRef(0)
   const cooldownRef = useRef(0)
-  const timeRef = useRef(new Date())
+  const timeRef = useRef(0)
 
   const text1Ref = useRef<HTMLSpanElement>(null)
   const text2Ref = useRef<HTMLSpanElement>(null)
@@ -56,6 +56,7 @@ const useMorphingText = (
     (fraction: number) => {
       const [current1, current2] = [text1Ref.current, text2Ref.current]
       if (!current1 || !current2) return
+      if (texts.length === 0) return
 
       setTextState(current2, fraction)
 
@@ -111,7 +112,7 @@ const useMorphingText = (
     textIndexRef.current = 0
     morphRef.current = 0
     cooldownRef.current = 0
-    timeRef.current = new Date()
+    timeRef.current = performance.now()
     setStyles(0)
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -120,9 +121,9 @@ const useMorphingText = (
     }
 
     const animate = () => {
-      const newTime = new Date()
-      const dt = (newTime.getTime() - timeRef.current.getTime()) / 1000
-      timeRef.current = newTime
+      const now = performance.now()
+      const dt = (now - timeRef.current) / 1000
+      timeRef.current = now
 
       cooldownRef.current -= dt
 

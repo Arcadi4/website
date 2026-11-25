@@ -22,11 +22,6 @@ export interface ProximityShadowTuning {
   wghtMaxExtra: number
 }
 
-export interface ShadowOffset {
-  x: number
-  y: number
-}
-
 export const defaultShadowTuning: ProximityShadowTuning = {
   hoverEnterLerp: 0.12,
   hoverLeaveLerp: 0.2,
@@ -43,7 +38,7 @@ export const defaultShadowTuning: ProximityShadowTuning = {
   wghtMaxExtra: 400
 }
 
-export function clamp(value: number, min: number, max: number) {
+function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
 
@@ -66,7 +61,7 @@ export function parseVariationSettings(settingsStr: string) {
 // output is visually identical to full-precision interpolation.
 const SETTINGS_STEPS = 200
 
-export interface VariationSettingsCache {
+interface VariationSettingsCache {
   baseFor(falloffValue: number): string
   shadowFor(falloffValue: number, shadowStrength: number): string
 }
@@ -157,7 +152,7 @@ export function getFalloffValue(
       // Pulls most intensity close to the center for a tighter hotspot.
       return norm ** 2
     case "gaussian":
-      // Produces a soft bell-shaped halo that fades smoothly at the edges.
+      // Bell-shaped halo; callers zero it at the radius boundary.
       return Math.exp(-((distance / (radius / 2)) ** 2) / 2)
     case "linear":
     default:
@@ -172,7 +167,12 @@ export interface ShadowOffsetResult {
   visible: boolean
 }
 
-export type ShadowOffsetComputer = (
+interface ShadowOffset {
+  x: number
+  y: number
+}
+
+type ShadowOffsetComputer = (
   deltaX: number,
   deltaY: number,
   distance: number,

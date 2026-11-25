@@ -2,35 +2,28 @@
 
 import { Button } from "@ui-sdk/react/button"
 
-import type { ProximityLinkProps } from "@/components/proximity/ProximityLink"
-import ProximityLink from "@/components/proximity/ProximityLink"
+import ProximityLink from "@/components/ui/ProximityLink"
 import { EaseIn } from "@/components/animations/EaseIn"
 import type { LinkItem } from "@/app/posts/menuItems"
 
 type SiteNavProps = {
   readonly items: readonly LinkItem[]
   readonly className?: string
-  readonly itemClassName?: string
   readonly linkClassName?: string
   readonly prefix?: string
   readonly suffix?: string
-  readonly shadowColor?: ProximityLinkProps["shadowColor"]
   readonly delayMs?: number
   readonly delayStepMs?: number
-  readonly onSeen?: boolean
 }
 
 export function SiteNav({
   items,
   className = "flex flex-col",
-  itemClassName,
   linkClassName,
   prefix = "→ ",
   suffix,
-  shadowColor,
   delayMs = 0,
-  delayStepMs = 0,
-  onSeen = false
+  delayStepMs = 0
 }: SiteNavProps) {
   return (
     <div className={className}>
@@ -39,38 +32,14 @@ export function SiteNav({
           key={`${item.name}-${item.href}`}
           from="right"
           delayMs={delayMs + index * delayStepMs}
-          onSeen={onSeen}
         >
-          {itemClassName ? (
-            <div className={itemClassName}>
-              {prefix}
-              <Button
-                render={
-                  <ProximityLink
-                    href={item.href}
-                    label={item.name}
-                    shadowColor={shadowColor}
-                    className={linkClassName}
-                  />
-                }
-              >
-                {item.name}
-              </Button>
-              {suffix}
-            </div>
-          ) : (
-            <Button
-              render={
-                <ProximityLink
-                  href={item.href}
-                  shadowColor={shadowColor}
-                  className={linkClassName}
-                />
-              }
-            >
-              {prefix + item.name + (suffix ?? "")}
-            </Button>
-          )}
+          <Button
+            render={
+              <ProximityLink href={item.href} className={linkClassName} />
+            }
+          >
+            {prefix + item.name + (suffix ?? "")}
+          </Button>
         </EaseIn>
       ))}
     </div>

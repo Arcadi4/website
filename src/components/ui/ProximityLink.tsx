@@ -1,17 +1,33 @@
 "use client"
 
+import "./proximity-link.css"
 import NextLink from "next/link"
-import { memo, useMemo, useRef } from "react"
+import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react"
 import type { AnchorHTMLAttributes, MutableRefObject } from "react"
-import { useCallback } from "react"
 import ProximityShadowText, {
   setProximityShadowPointerPosition
 } from "./ProximityShadowText"
 import { defaultShadowTuning } from "./proximityLinkMath"
-import type { FalloffMode } from "./proximityLinkMath"
-import type { ProximityLinkProps } from "./ProximityLink.types"
+import type { FalloffMode, ProximityShadowTuning } from "./proximityLinkMath"
+import { isExternalHref } from "@/lib/utils"
 
-export type { ProximityLinkProps } from "./ProximityLink.types"
+export interface ProximityLinkProps extends Omit<
+  AnchorHTMLAttributes<HTMLAnchorElement>,
+  "children"
+> {
+  href: string
+  children?: string
+  label?: string
+  fromFontVariationSettings?: string
+  toFontVariationSettings?: string
+  radius?: number
+  falloff?: FalloffMode
+  shadowColor?: string
+  allowShadowYFollow?: boolean
+  reverseShadowDirection?: boolean
+  reverseShadowNearStronger?: boolean
+  shadowTuning?: Partial<ProximityShadowTuning>
+}
 
 const DEFAULT_PROXIMITY_LINK_PROPS = {
   fromFontVariationSettings: "'wght' 300",
@@ -53,23 +69,27 @@ function ProximityLink({
   }
 
   const containerRef = useRef<HTMLAnchorElement | null>(null)
-  const setContainerRef = useCallback(
-    (node: HTMLAnchorElement | null) => {
-      containerRef.current = node
-      if (typeof forwardedRef === "function") {
-        forwardedRef(node)
-      } else if (forwardedRef) {
-        forwardedRef.current = node
-      }
-    },
-    [forwardedRef]
-  )
+  const forwardedRefRef = useRef(forwardedRef)
+
+  useLayoutEffect(() => {
+    forwardedRefRef.current = forwardedRef
+  }, [forwardedRef])
+
+  const setContainerRef = useCallback((node: HTMLAnchorElement | null) => {
+    containerRef.current = node
+    const target = forwardedRefRef.current
+    if (typeof target === "function") {
+      target(node)
+    } else if (target) {
+      target.current = node
+    }
+  }, [])
   const isHoveredRef = useRef(false)
   const resolvedShadowTuning = useMemo(
     () => ({ ...defaultShadowTuning, ...shadowTuning }),
     [shadowTuning]
   )
-  const isExternal = href.startsWith("http") || href.startsWith("mailto:")
+  const isExternal = isExternalHref(href)
   const linkClass = `proximity-link ${className}`
 
   const proximityContent = (
